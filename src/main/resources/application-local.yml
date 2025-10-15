@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: kafka-integration-testing
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+
+# Configuration for local development with Kafka at port 9092 and schema registry at port 8081
+kafka:
+  task:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: task-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+    topic: task-topic
+    schema-registry-url: http://localhost:8081
+    auto-register-schemas: false
+  project:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: project-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+    topic: project-topic
+
+  # Isolated producer configuration for Todo publisher
+  todo-producer:
+    bootstrap-servers: localhost:9092
+    topic: todo-topic
+
+  # Isolated producer configuration for Issue publisher
+  issue-producer:
+    bootstrap-servers: localhost:9092
+    topic: issue-topic
+    schema-registry-url: http://localhost:8081
+    auto-register-schemas: false
+
+  # Isolated producer configuration for Project publisher
+  project-producer:
+    bootstrap-servers: localhost:9092
+    topic: project-topic
+    transaction-id-prefix: project-tx-

@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: kafka-integration-testing
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+  h2:
+    console:
+      enabled: true
+
+# Custom properties for our isolated Kafka consumers/producers
+kafka:
+  task:
+    bootstrap-servers: kafka.mock.local:9093  # HTTPS-enabled broker
+    consumer:
+      group-id: task-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+    topic: task-topic
+    schema-registry-url: https://schema-registry.mock.local
+    auto-register-schemas: false
+  project:
+    bootstrap-servers: kafka.mock.local:9093  # HTTPS-enabled broker
+    consumer:
+      group-id: project-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+    topic: project-topic
+
+  # Isolated producer configuration for Todo publisher
+  todo-producer:
+    bootstrap-servers: kafka.mock.local:9093  # HTTPS-enabled broker
+    topic: todo-topic
+
+  # Isolated producer configuration for Issue publisher
+  issue-producer:
+    bootstrap-servers: kafka.mock.local:9093  # HTTPS-enabled broker
+    topic: issue-topic
+    schema-registry-url: https://schema-registry.mock.local
+    auto-register-schemas: false
+
+  # Transactional producer configuration for Project publisher
+  project-producer:
+    bootstrap-servers: kafka.mock.local:9093  # HTTPS-enabled broker
+    topic: project-topic
+    transaction-id-prefix: project-tx-
